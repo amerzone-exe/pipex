@@ -1,26 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   close_fd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jpiquet <jocelyn.piquet1998@gmail.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/14 15:12:46 by jpiquet           #+#    #+#             */
-/*   Updated: 2025/03/06 16:52:44 by jpiquet          ###   ########.fr       */
+/*   Created: 2025/03/20 20:12:02 by jpiquet           #+#    #+#             */
+/*   Updated: 2025/03/24 17:36:39 by jpiquet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	*ft_calloc(size_t nmemb, size_t size)
+void	close_both_files(int fd1, int fd2)
 {
-	size_t	*tab;
+	if (fd1 > 0)
+		close(fd1);
+	if (fd2 > 0)
+		close(fd2);
+}
 
-	if (nmemb == 0 || size == 0)
-		return (malloc(0));
-	tab = malloc(nmemb * size);
-	if (tab == 0)
-		return (NULL);
-	ft_bzero(tab, nmemb * size);
-	return (tab);
+void	close_more_files(int fd1, int fd2, int fd3, int fd4)
+{
+	if (fd1 > 0)
+		close(fd1);
+	if (fd2 > 0)
+		close(fd2);
+	if (fd3 > 0)
+		close(fd3);
+	if (fd4 > 0)
+		close(fd4);
 }

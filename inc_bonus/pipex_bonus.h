@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jpiquet <jocelyn.piquet1998@gmail.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 13:21:40 by jpiquet           #+#    #+#             */
-/*   Updated: 2025/03/26 19:50:06 by jpiquet          ###   ########.fr       */
+/*   Updated: 2025/03/26 19:52:35 by jpiquet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include "../Libft/libft.h"
 # include <stdio.h>
@@ -39,6 +39,7 @@ typedef struct s_fd
 
 void	exit_error(char *str);
 void	exit_fd(int fd, t_cmd *cmd, int nb_cmd);
+void	exit_both_fd(int fd, int fd2, t_cmd *cmd, int nb_cmd);
 void	exit_tab(t_cmd *cmd, int nb_cmd, int code);
 void	exit_pid_error(int *pipex, t_fd *fd, t_cmd *cmd);
 

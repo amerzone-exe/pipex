@@ -6,101 +6,100 @@
 #    By: jpiquet <jocelyn.piquet1998@gmail.com>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/28 15:52:51 by jpiquet           #+#    #+#              #
-#    Updated: 2025/02/27 17:07:31 by jpiquet          ###   ########.fr        #
+#    Updated: 2025/03/27 16:17:01 by jpiquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -g3 -MMD -MP
+CFLAGS = -Wall -Wextra -Werror
 
 SRCDIR = src
-LIBFTDIR = Libft
-MLXDIR = mlx-linux
-OBJDIR = obj
-INCDIR = inc
+SRCDIR_bonus = src_bonus
 
-SRC =	$(SRCDIR)/main.c
+LIBFTDIR = Libft
+LIBFT_SRC = Libft/ft_atoi.c Libft/ft_bzero.c Libft/ft_calloc.c \
+            Libft/ft_isalnum.c Libft/ft_isalpha.c Libft/ft_isascii.c \
+            Libft/ft_isdigit.c Libft/ft_isprint.c Libft/ft_itoa.c \
+            Libft/ft_memcpy.c Libft/ft_memmove.c Libft/ft_memset.c \
+            Libft/ft_putchar_fd.c Libft/ft_putendl_fd.c Libft/ft_putnbr_fd.c \
+            Libft/ft_putstr_fd.c Libft/ft_split.c Libft/ft_strchr.c \
+            Libft/ft_strdup.c Libft/ft_strjoin.c Libft/ft_strlen.c \
+            Libft/ft_strncmp.c Libft/ft_strnstr.c Libft/ft_strrchr.c \
+            Libft/ft_substr.c Libft/ft_tolower.c Libft/ft_toupper.c
+
+LIBFT_INC = Libft/libft.h
+
+OBJDIR = obj
+OBJDIR_bonus = obj_bonus
+
+INCDIR = inc
+INCDIR_bonus = inc_bonus
+
+SRC =	$(SRCDIR)/main.c \
+		$(SRCDIR)/parse.c \
+		$(SRCDIR)/pipex.c \
+		$(SRCDIR)/pipex_utils.c \
+		$(SRCDIR)/error.c \
+		$(SRCDIR)/close_fd.c
+
+SRC_BONUS = $(SRCDIR_bonus)/main_bonus.c \
+			$(SRCDIR_bonus)/parse_bonus.c \
+			$(SRCDIR_bonus)/pipex_bonus.c \
+			$(SRCDIR_bonus)/pipex_utils_bonus.c \
+			$(SRCDIR_bonus)/error_bonus.c \
+			$(SRCDIR_bonus)/close_fd_bonus.c
+
+OBJ_bonus = $(patsubst $(SRCDIR_bonus)/%.c,$(OBJDIR_bonus)/%.o,$(SRC_BONUS))
 
 OBJ = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
+
 LIBFT = $(LIBFTDIR)/libft.a
-
-.DEFAULT_GOAL = all
-
-DEPS = $(OBJ:.o=.d)
-
-CLEAN_MARKER = .clean_done
-FCLEAN_MARKER = .fclean_done
-
--include $(DEPS)
-
-
-define animate_dots
-	@for i in 1 2 3; do \
-		printf "." && sleep 0.5; \
-	done; \
-	echo
-endef
-
-# define progress_bar
-# 	@echo -n "Compiling $(NAME) "
-# 	@for i in {1..10}; do \
-# 		sleep 0.1; \
-# 		echo -n "#"; \
-# 	done
-# 	@echo "$(NAME) done successfully ✅"
-# endef
 
 #---------------------------------------------#
 
 all : $(LIBFT) $(NAME)
 
-
 $(NAME) : $(OBJ) inc/pipex.h
-	@$(CC) $(CFLAGS) -I $(INCDIR) -I $(MLXDIR) -o $(NAME) $(OBJ) $(LIBFT) $(MLX_FLAGS) 2>/dev/null
+	$(CC) $(CFLAGS) -I $(INCDIR) -o $(NAME) $(OBJ) $(LIBFT)
+	@echo "$(NAME) done successfully ✅"
 
-
-$(LIBFTDIR)/libft.a :
-	@echo -n "Compiling Libft"
-	@$(call animate_dots)
-	@$(MAKE) -s -C $(LIBFTDIR)
+$(LIBFTDIR)/libft.a : $(LIBFT_SRC) $(LIBFT_INC)
+	$(MAKE) -s -C $(LIBFTDIR)
 	@echo "Libft done successfully ✅"
 
-
 $(OBJDIR)/%.o : $(SRCDIR)/%.c | $(OBJDIR)
-	@echo -n "Compiling $(NAME)"
-	@$(call animate_dots)
-	@$(CC) $(CFLAGS) -I $(INCDIR) -o $@ -c $< 2>/dev/null
-	@echo "$(NAME) done successfully ✅"
-	
+	$(CC) $(CFLAGS) -I $(INCDIR) -o $@ -c $<
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
-clean : $(CLEAN_MARKER)
+bonus : .bonus $(NAME)
 
-$(CLEAN_MARKER) :
-	@echo -n "Cleaning object files"
-	@$(call animate_dots)
-	@rm -rf $(OBJDIR) 2>/dev/null
+.bonus : $(OBJ_bonus) inc_bonus/pipex_bonus.h
+	$(CC) $(CFLAGS) -I $(INCDIR_bonus) -o $(NAME) $(OBJ_bonus) $(LIBFT)
+	@touch .bonus
+	@echo "Pipex bonus done successfully ✅"
+
+$(OBJDIR_bonus)/%.o : $(SRCDIR_bonus)/%.c | $(OBJDIR_bonus)
+	$(CC) $(CFLAGS) -I $(INCDIR_bonus) -o $@ -c $<
+
+$(OBJDIR_bonus):
+	@mkdir -p $(OBJDIR_bonus)
+
+clean :
+	@rm -rf $(OBJDIR) $(OBJDIR_bonus) .bonus 2>/dev/null
 	@$(MAKE) -s -C $(LIBFTDIR) clean
 	@echo "Clean done 🗑️"
-	@touch $(CLEAN_MARKER)
 
-fclean : $(FCLEAN_MARKER)
-
-$(FCLEAN_MARKER) : $(CLEAN_MARKER)
-	@echo -n "Cleaning executable and libraries"
-	@$(call animate_dots)
-	@rm -f $(NAME) 2>/dev/null
+fclean : clean
+	@rm -f $(NAME) $(BONUS) 2>/dev/null
 	@$(MAKE) -s -C $(LIBFTDIR) fclean
 	@echo "Full clean done 🗑️"
-	@touch $(FCLEAN_MARKER)
 
 re: 
 	@$(MAKE) -s fclean
 	@$(MAKE) -s all
-	@rm -f $(CLEAN_MARKER) $(FCLEAN_MARKER)
 
 .PHONY : clean fclean re
